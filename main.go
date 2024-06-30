@@ -62,10 +62,11 @@ func main() {
 		for i, todo := range todos {
 			if fmt.Sprint(todo.ID) == id {
 				todos = append(todos[:i], todos[i+1:]...)
+				return c.Status(200).JSON(fiber.Map{"success": " ture"})
 			}
 		}
-		// 1 2 3 4 5      3を消した時　todos[i+1:]...
-		// 1 2 4 5
+
+		return c.Status(404).JSON(fiber.Map{"error": "Todo not found"})
 
 	})
 
