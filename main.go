@@ -45,4 +45,7 @@ func main() {
 	}
 
 	fmt.Println("Connected to MONGODB ATLAS")
+
+	collection = client.Database("golang_db").Collection("todos")
+
 }
