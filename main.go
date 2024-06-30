@@ -48,10 +48,11 @@ func main() {
 		for i, todo := range todos {
 			if fmt.Sprint(todo.ID) == id {
 				todos[i].Completed = true
-				todos[i].Completed = !todos[i].Completed //false
+				return c.Status(200).JSON(todos[i])
 			}
 		}
 
+		return c.Status(404).JSON(fiber.Map{"error": "Todo not found"})
 	})
 
 	log.Fatal(app.Listen(":4000"))
