@@ -23,6 +23,7 @@ func main() {
 		return c.Status(200).JSON(fiber.Map{"msg": "hello world"})
 	})
 
+	// Create a Todo
 	app.Post("/api/todos", func(c *fiber.Ctx) error {
 		todo := &Todo{}
 
@@ -37,14 +38,19 @@ func main() {
 		todo.ID = len(todos) + 1
 		todos = append(todos, *todo)
 
-		var x int = 5 // 0x00001
-
-		var p *int = &x // 0x00001
-
-		fmt.Println(p)  // 0x00001
-		fmt.Println(*p) // 5
-
 		return c.Status(201).JSON(todo)
+	})
+
+	// Update a Todo
+	app.Patch("/api/todos/:id", func(c *fiber.Ctx) error {
+		id := c.Params("id")
+
+		for i, todo := range todos {
+			if fmt.Sprint(todo.ID) == id {
+				todos[i].Completed = true
+				todos[i].Completed = !todos[i].Completed //false
+			}
+		}
 
 	})
 
