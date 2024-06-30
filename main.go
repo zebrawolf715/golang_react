@@ -19,8 +19,8 @@ func main() {
 
 	todos := []Todo{}
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(200).JSON(fiber.Map{"msg": "hello world"})
+	app.Get("/api/todos", func(c *fiber.Ctx) error {
+		return c.Status(200).JSON(todos)
 	})
 
 	// Create a Todo
@@ -56,7 +56,7 @@ func main() {
 	})
 
 	// Delete a Todo
-	app.Delete("/api/todos/:id")
+	//app.Delete("/api/todos/:id")
 
 	log.Fatal(app.Listen(":4000"))
 
