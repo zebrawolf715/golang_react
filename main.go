@@ -56,7 +56,18 @@ func main() {
 	})
 
 	// Delete a Todo
-	//app.Delete("/api/todos/:id")
+	app.Delete("/api/todos/:id", func(c *fiber.Ctx) error {
+		id := c.Params("id")
+
+		for i, todo := range todos {
+			if fmt.Sprint(todo.ID) == id {
+				todos = append(todos[:i], todos[i+1:]...)
+			}
+		}
+		// 1 2 3 4 5      3を消した時　todos[i+1:]...
+		// 1 2 4 5
+
+	})
 
 	log.Fatal(app.Listen(":4000"))
 
