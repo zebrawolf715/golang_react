@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gofiber/fiber"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -47,5 +48,12 @@ func main() {
 	fmt.Println("Connected to MONGODB ATLAS")
 
 	collection = client.Database("golang_db").Collection("todos")
+
+	app := fiber.New()
+
+	app.Get("/api/todos", grtTodos)
+	app.Post("/api/todos", createTodo)
+	app.Patch("/api/todos/:id", updateTodo)
+	app.Delete("/api/todos/:id", deleteTodo)
 
 }
