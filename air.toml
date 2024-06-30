@@ -1,0 +1,8 @@
+root = "." # プロジェクトのルートディレクトリ
+tmp_dir = "tmp" # 一時ファイルが格納されるディレクトリ
+[build] # ビルドに関する設定
+  bin = "main" # ビルド後の実行ファイルの出力先を指定
+  cmd = "go build -o {{.Output}} {{.Input}}" # ビルドコマンドを指定
+  exclude = ["tmp/*", "client/*"]  # ビルドから除外
+  include = ["**/*.go"] # ビルドに含める
+  ignore = ["tmp/*"] # ビルドをトリガーするときに無視する
