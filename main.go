@@ -66,16 +66,25 @@ func main() {
 
 }
 
+// Get
 func getTodos(c *fiber.Ctx) error {
 	var todos []Todo
 
-	curor, err := collection.Find(context.Background(), bson.M{})
-	//curor MongoDBで使う
+	cursor, err := collection.Find(context.Background(), bson.M{})
+	//cusror MongoDBで使う
 
-	if err != null {
+	if err != nil {
 		return err
 	}
 
+	for cursor.Next(context.Background()) {
+		var todo Todo
+		if err := cursor.Decode(&todo); err != nil {
+			return err
+		}
+		todos = append(todos, todo)
+	}
+	return c.JSON(todos)
 }
 
 //func createTodo(c *fiber.Ctx) error {}
