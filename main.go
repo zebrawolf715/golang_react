@@ -71,6 +71,11 @@ func getTodos(c *fiber.Ctx) error {
 
 	curor, err := collection.Find(context.Background(), bson.M{})
 	//curor MongoDBで使う
+
+	if err != null {
+		return err
+	}
+
 }
 
 //func createTodo(c *fiber.Ctx) error {}
