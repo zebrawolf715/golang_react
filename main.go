@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofiber/fiber"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -51,9 +52,27 @@ func main() {
 
 	app := fiber.New()
 
-	app.Get("/api/todos", grtTodos)
-	app.Post("/api/todos", createTodo)
-	app.Patch("/api/todos/:id", updateTodo)
-	app.Delete("/api/todos/:id", deleteTodo)
+	app.Get("/api/todos", getTodos)
+	//app.Post("/api/todos", createTodo)
+	//app.Patch("/api/todos/:id", updateTodo)
+	//app.Delete("/api/todos/:id", deleteTodo)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5000"
+	}
+
+	log.Fatal(app.Listen("0.0.0.0" + port))
 
 }
+
+func getTodos(c *fiber.Ctx) error {
+	var todos []Todo
+
+	curor, err := collection.Find(context.Background(), bson.M{})
+	//curor MongoDBで使う
+}
+
+//func createTodo(c *fiber.Ctx) error {}
+//func updateTodo(c *fiber.Ctx) error {}
+//func deleteTodo(c *fiber.Ctx) error {}
