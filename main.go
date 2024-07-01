@@ -9,14 +9,15 @@ import (
 	"github.com/gofiber/fiber"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Todo struct {
-	ID        int    `json:"id" bson:"_id"` //mongoDBでbsonを使う
-	Completed bool   `json:"completed" `
-	Body      string `json:"body"`
+	ID        primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"` //mongoDBでbsonを使う
+	Completed bool               `json:"completed" `
+	Body      string             `json:"body"`
 }
 
 var collection *mongo.Collection
@@ -31,7 +32,7 @@ func main() {
 	}
 
 	//データベース関連
-	MONGODB_URI := os.Getenv("MONGODB_URI") //データベースURI
+	MONGODB_URI := os.Getenv("MONGODB_URI") //.envファイルのデータベースURI
 	clientOptions := options.Client().ApplyURI(MONGODB_URI)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 
@@ -53,8 +54,8 @@ func main() {
 	app := fiber.New()
 
 	app.Get("/api/todos", getTodos)
-	//app.Post("/api/todos", createTodo)
-	//app.Patch("/api/todos/:id", updateTodo)
+	app.Post("/api/todos", createTodo)
+	app.Patch("/api/todos/:id", updateTodo)
 	//app.Delete("/api/todos/:id", deleteTodo)
 
 	port := os.Getenv("PORT")
@@ -77,6 +78,8 @@ func getTodos(c *fiber.Ctx) error {
 		return err
 	}
 
+	defer cursor.Close(context.Background())
+
 	for cursor.Next(context.Background()) {
 		var todo Todo
 		if err := cursor.Decode(&todo); err != nil {
@@ -84,9 +87,37 @@ func getTodos(c *fiber.Ctx) error {
 		}
 		todos = append(todos, todo)
 	}
+
 	return c.JSON(todos)
 }
 
-//func createTodo(c *fiber.Ctx) error {}
-//func updateTodo(c *fiber.Ctx) error {}
+// POST
+func createTodo(c *fiber.Ctx) error {
+	todo := new(Todo)
+	//{id: 0, completed:false, body: ""} 最初
+
+	if err := c.BodyParser(todo); err != nil {
+		return err
+	}
+
+	if todo.Body == "" {
+		return c.Status(400).JSON(fiber.Map{"err": "Todo body cannot be empty"})
+	}
+
+	iinsertResult, err := collection.InsertOne(context.Background(), todo)
+	if err != nil {
+		return err
+	}
+
+	todo.ID = iinsertResult.InsertedID.(primitive.ObjectID)
+
+	return c.Status(201).JSON(todo)
+
+}
+
+// Patch
+func updateTodo(c *fiber.Ctx) error {
+
+}
+
 //func deleteTodo(c *fiber.Ctx) error {}
