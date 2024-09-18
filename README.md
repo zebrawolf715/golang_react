@@ -1,4 +1,4 @@
-# golang と React で構築
+# golang と React で構築（構築途中）
 
 MongoDB
 
